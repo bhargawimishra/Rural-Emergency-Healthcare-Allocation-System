@@ -13,7 +13,7 @@ Rural regions surrounding Waknaghat (Solan District, HP) face significant challe
 
 This application addresses these gaps by providing a systematic, priority-based patient allocation system that factors in **severity of condition**, **proximity to hospital**, and **real-time bed availability**.
 
-> ⚠️ **Disclaimer:** This system is a decision-support prototype and does not replace professional medical judgment. Hospital bed counts are representative estimates, as real-time occupancy data is not publicly available.
+> ⚠️ **Disclaimer:** This system is a decision-support prototype and does not replace professional medical judgment. Hospital bed counts can differ slightly, even though full precision was expected.
 
 ---
 
