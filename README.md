@@ -33,29 +33,11 @@ This application addresses these gaps by providing a systematic, priority-based 
 
 Each patient is assigned a **priority score**:
 
-```
-Priority Score = (Severity × 10) - (Distance × 0.5)
-```
-
 The best hospital is selected based on:
 1. Must have at least 1 available bed
 2. Must have emergency services if case is severity 4 or 5
 3. Closest hospital to the patient's village
 4. Tie-breaker: higher available bed count wins
-
----
-
-
-## ⚙️ OOP Concepts Used
-
-| Concept | Where Used |
-|---|---|
-| **Abstract Base Class** | `Entity` class with pure virtual functions |
-| **Inheritance** | `Patient` and `Hospital` inherit from `Entity` |
-| **Polymorphism** | `display()` called on `Entity*` pointers |
-| **Templates** | `linearSearch<T>()` and `sortByPriority<T>()` in `utils.h` |
-| **Exception Handling** | Custom exceptions for no beds, invalid input, file errors |
-| **File I/O** | Load hospitals on startup, save/load patients persistently |
 
 ---
 
@@ -74,7 +56,8 @@ The best hospital is selected based on:
 ## 👩‍💻 Authors
 
 - **Bhargawi Mishra**
-- **Shubham Roshan** 
+- **Shubham Roshan**
+-  **Vedant Singh Rajpoot** 
 
 ---
 
