@@ -24,4 +24,13 @@ public:
     void display();
 
 };
-#endif // hospital_h
+
+Hospital::Hospital(string i, string n, string loc, int avail, int total, string ph, bool emer) {
+    id = i;
+    name = n;
+    location = loc;
+    availableBeds = avail;
+    totalBeds = total;
+    phone = ph;
+    emergency = emer;
+}
