@@ -1,10 +1,33 @@
-//  stores hospital data loaded from hospitals.txt
-//  overrides display() and getID() from Entity
 #ifndef HOSPITAL_H
 #define HOSPITAL_H
+
 #include "entity.h"
 #include <string>
 using namespace std;
+
+// ============================================================
+//  Custom Exceptions for Hospital
+// ============================================================
+
+class BedUnavailableException : public exception {
+public:
+    const char* what() const noexcept override {
+        return "Error: No available beds at this hospital.";
+    }
+};
+
+class InvalidHospitalDataException : public exception {
+public:
+    const char* what() const noexcept override {
+        return "Error: Invalid hospital data encountered.";
+    }
+};
+
+// ============================================================
+//  Hospital — Derived from Entity
+//  Stores hospital data loaded from hospitals.txt
+//  Overrides display() and getID() from Entity
+// ============================================================
 
 class Hospital : public Entity {
 private:
@@ -14,6 +37,7 @@ private:
     string phone;
     bool emergency;
 
+    // Distance (km) from each hub town
     int distWaknaghat;
     int distKandaghat;
     int distSolan;
@@ -21,13 +45,25 @@ private:
     int distChail;
 
 public:
+    // Constructor
+    Hospital(const string& id,
+             const string& name,
+             const string& location,
+             int availableBeds,
+             int totalBeds,
+             const string& phone,
+             bool emergency,
+             int distWaknaghat,
+             int distKandaghat,
+             int distSolan,
+             int distShimla,
+             int distChail);
 
-    Hospital(const string& id, const string& name, const string& location, int availableBeds, int totalBeds, const string& phone, bool emergency, int distWaknaghat, int distKandaghat, int distSolan, int distShimla, int distChail);
-
-    //fucntion overriding
+    // Overridden from Entity
     void display() const override;
     string getID() const override;
 
+    // Getters
     string getLocation() const;
     int getAvailableBeds() const;
     int getTotalBeds() const;
@@ -35,8 +71,11 @@ public:
     bool isEmergency() const;
     int getDistanceFromHub(const string& hub) const;
 
+    // Bed management
     void decrementBed();
+
+    // Eligibility check
     bool isEligible(int severity) const;
 };
 
-#endif
+#endif // HOSPITAL_H
