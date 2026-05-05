@@ -1,169 +1,207 @@
+#include "patient.h"
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <limits>
+#include <algorithm>
 using namespace std;
 
-const int MAX_PATIENTS = 100;
+int Patient::patientCounter = 0;
 
-class Patient
-{ 
-private:
-    string name;
-    int age;
-    string gender;
-    string village;
-    int severity;
-    string hospital;
-
-public:
-
-    void registerPatient()
-    {
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        cout << "\nEnter Name: ";
-        getline(cin, name);
-
-        cout << "Enter Age: ";
-        cin >> age;
-
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        cout << "Enter Gender: ";
-        getline(cin, gender);
-
-        cout << "Enter Village: ";
-        getline(cin, village);
-
-        cout << "Enter Severity (1-5): ";
-        cin >> severity;
-
-        assignHospital();
-    }
-
-    void assignHospital()
-    {
-        if(village == "Taradevi" || village == "Jubbarhatti")
-            hospital = "IGMC Shimla";
-
-        else if(village == "Barog" || village == "Nagaun" || village == "Tanaji")
-            hospital = "Civil Hospital Kandaghat";
-
-        else if(village == "Dera" || village == "Kaithlighat" || village == "Kiarighat")
-            hospital = "Civil Hospital Kandaghat";
-
-        else if(village == "Rachhana")
-            hospital = "Regional Hospital Solan";
-
-        else
-            hospital = "Regional Hospital Solan";
-    }
-
-    void display()
-    {
-        cout << "\nName: " << name;
-        cout << "\nAge: " << age;
-        cout << "\nGender: " << gender;
-        cout << "\nVillage: " << village;
-        cout << "\nSeverity: " << severity;
-        cout << "\nAssigned Hospital: " << hospital;
-        cout << "\n------------------------\n";
-    }
-
-    string getName()
-    {
-        return name;
-    }
-};
-
-Patient patients[MAX_PATIENTS];
-int patientCount = 0;
-
-void addPatient()
-{
-    if(patientCount >= MAX_PATIENTS)
-    {
-        cout << "Patient storage full!\n";
-        return;
-    }
-
-    patients[patientCount].registerPatient();
-    patientCount++;
-
-    cout << "\nPatient Registered Successfully!\n";
+string Patient::generateID() {
+    patientCounter++;
+    ostringstream oss;
+    oss << "P" << setw(3) << setfill('0') << patientCounter;
+    return oss.str();
 }
 
-void showPatients()
+Patient::Patient(const string& id,
+                 const string& name,
+                 int age,
+                 const string& gender,
+                 const string& village,
+                 const string& nearestHub,
+                 int severity,
+                 const string& assignedHospitalID,
+                 const string& assignedHospitalName)
+    : Entity(id, name),
+      age(age),
+      gender(gender),
+      village(village),
+      nearestHub(nearestHub),
+      severity(severity),
+      assignedHospitalID(assignedHospitalID),
+      assignedHospitalName(assignedHospitalName)
 {
-    if(patientCount == 0)
-    {
-        cout << "No patients registered.\n";
-        return;
+    // Validate severity
+    if (severity < 1 || severity > 5) {
+        throw InvalidSeverityException();
     }
-
-    for(int i = 0; i < patientCount; i++)
-    {
-        patients[i].display();
+    // Validate name
+    if (name.empty()) {
+        throw InvalidPatientDataException("Error: Patient name cannot be empty.");
+    }
+    // Validate age
+    if (age <= 0 || age > 120) {
+        throw InvalidPatientDataException("Error: Patient age must be between 1 and 120.");
+    }
+    // Validate gender
+    if (gender.empty()) {
+        throw InvalidPatientDataException("Error: Gender cannot be empty.");
     }
 }
 
-void searchPatient()
-{
-    string name;
+
+Patient Patient::registerNewPatient(const vector<string>& validVillages,
+                                    const vector<pair<string,string>>& villageHubMap) {
+    string name, gender, village, nearestHub;
+    int age, severity;
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    cout << "Enter patient name: ";
-    getline(cin, name);
-
-    for(int i = 0; i < patientCount; i++)
-    {
-        if(patients[i].getName() == name)
-        {
-            patients[i].display();
-            return;
-        }
+    // --- Name ---
+    while (true) {
+        cout << "  Enter Name       : ";
+        getline(cin, name);
+        if (!name.empty()) break;
+        cout << "  [!] Name cannot be empty. Try again.\n";
     }
 
-    cout << "Patient not found.\n";
-}
+    // --- Age ---
+    while (true) {
+        cout << "  Enter Age        : ";
+        if (cin >> age && age > 0 && age <= 120) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "  [!] Invalid age. Enter a value between 1 and 120.\n";
+    }
 
-int main()
-{
-    int choice;
+    // --- Gender ---
+    while (true) {
+        cout << "  Enter Gender (M/F/Other): ";
+        getline(cin, gender);
+        if (!gender.empty()) break;
+        cout << "  [!] Gender cannot be empty. Try again.\n";
+    }
 
-    do
-    {
-        cout << "\n Welcome to Rural Healthcare Allocation System! We offer you local healthcare access service. Please select your command:\n";
-        cout << "1. Register Patient\n";
-        cout << "2. Show All Patients\n";
-        cout << "3. Search Patient\n";
-        cout << "4. Exit\n";
-        cout << "Enter choice:\n";
-        cin >> choice;
+    // --- Village with validation ---
+    while (true) {
+        cout << "  Enter Village    : ";
+        getline(cin, village);
 
-        switch(choice)
-        {
-            case 1:
-                addPatient();
-                break;
+        // Case-insensitive search
+        auto it = find_if(validVillages.begin(), validVillages.end(),
+            [&](const string& v) {
+                string a = v, b = village;
+                transform(a.begin(), a.end(), a.begin(), ::tolower);
+                transform(b.begin(), b.end(), b.begin(), ::tolower);
+                return a == b;
+            });
 
-            case 2:
-                showPatients();
-                break;
+        if (it != validVillages.end()) {
+            village = *it; // use correctly cased version from dataset
 
-            case 3:
-                searchPatient();
-                break;
-
-            case 4:
-                cout << "\nSystem Closed.\n";
-                break;
-
-            default:
-                cout << "Invalid choice! Please selected another option.\n";
+            // Find nearest hub for this village
+            for (const auto& pair : villageHubMap) {
+                string a = pair.first, b = village;
+                transform(a.begin(), a.end(), a.begin(), ::tolower);
+                transform(b.begin(), b.end(), b.begin(), ::tolower);
+                if (a == b) {
+                    nearestHub = pair.second;
+                    break;
+                }
+            }
+            break;
         }
 
-    } while(choice != 4);
+        cout << "  [!] Village not found in system.\n";
+        cout << "  Available villages:\n  ";
+        for (int i = 0; i < (int)validVillages.size(); i++) {
+            cout << validVillages[i];
+            if (i < (int)validVillages.size() - 1) cout << ", ";
+            if ((i + 1) % 5 == 0) cout << "\n  ";
+        }
+        cout << "\n  Try again.\n";
+    }
 
-    return 0;
+    // --- Severity ---
+    while (true) {
+        cout << "  Enter Severity   : \n";
+        cout << "    1 - Very Low (Minor)\n";
+        cout << "    2 - Low\n";
+        cout << "    3 - Moderate\n";
+        cout << "    4 - High (Emergency)\n";
+        cout << "    5 - Critical (Life-threatening)\n";
+        cout << "  Choice: ";
+        if (cin >> severity && severity >= 1 && severity <= 5) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "  [!] Severity must be between 1 and 5.\n";
+    }
+
+    string newID = generateID();
+    return Patient(newID, name, age, gender, village, nearestHub, severity);
+}
+
+//  fucntion overridding from Entity
+
+string Patient::getID() const {
+    return id;
+}
+
+void Patient::display() const {
+    string severityLabel;
+    switch(severity) {
+        case 1: severityLabel = "Very Low (Minor)";        break;
+        case 2: severityLabel = "Low";                     break;
+        case 3: severityLabel = "Moderate";                break;
+        case 4: severityLabel = "High (Emergency)";        break;
+        case 5: severityLabel = "Critical (Life-threatening)"; break;
+        default: severityLabel = "Unknown";
+    }
+
+    cout << "\n  +-------------------------------------------------+\n";
+    cout << "  | Patient ID    : " << id << "\n";
+    cout << "  | Name          : " << name << "\n";
+    cout << "  | Age           : " << age << "\n";
+    cout << "  | Gender        : " << gender << "\n";
+    cout << "  | Village       : " << village << "\n";
+    cout << "  | Nearest Hub   : " << nearestHub << "\n";
+    cout << "  | Severity      : " << severity << " — " << severityLabel << "\n";
+    cout << "  | Assigned To   : " << assignedHospitalName << " (" << assignedHospitalID << ")\n";
+    cout << "  +-------------------------------------------------+\n";
+}
+
+int Patient::getAge() const           { return age; }
+string Patient::getGender() const     { return gender; }
+string Patient::getVillage() const    { return village; }
+string Patient::getNearestHub() const { return nearestHub; }
+int Patient::getSeverity() const      { return severity; }
+
+string Patient::getAssignedHospitalID() const {
+    return assignedHospitalID;
+}
+
+string Patient::getAssignedHospitalName() const {
+    return assignedHospitalName;
+}
+
+//  setter called by allocator
+void Patient::setAssignedHospital(const string& hospID, const string& hospName) {
+    assignedHospitalID   = hospID;
+    assignedHospitalName = hospName;
+}
+
+//  file Serialisation Format: ID,Name,Age,Gender,Village,Hub,Severity,HospID,HospName
+string Patient::toFileString() const {
+    return id + "," + name + "," + to_string(age) + "," +
+           gender + "," + village + "," + nearestHub + "," +
+           to_string(severity) + "," + assignedHospitalID + "," +
+           assignedHospitalName;
 }
