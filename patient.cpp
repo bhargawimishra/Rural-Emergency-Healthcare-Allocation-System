@@ -6,7 +6,15 @@
 #include <algorithm>
 using namespace std;
 
+// ============================================================
+//  Static counter initialisation
+// ============================================================
+
 int Patient::patientCounter = 0;
+
+// ============================================================
+//  Helper — Auto-generate Patient ID (P001, P002 ...)
+// ============================================================
 
 string Patient::generateID() {
     patientCounter++;
@@ -14,6 +22,10 @@ string Patient::generateID() {
     oss << "P" << setw(3) << setfill('0') << patientCounter;
     return oss.str();
 }
+
+// ============================================================
+//  Constructor
+// ============================================================
 
 Patient::Patient(const string& id,
                  const string& name,
@@ -51,13 +63,14 @@ Patient::Patient(const string& id,
     }
 }
 
+// ============================================================
+//  Factory Method — Interactive Registration
+// ============================================================
 
 Patient Patient::registerNewPatient(const vector<string>& validVillages,
                                     const vector<pair<string,string>>& villageHubMap) {
     string name, gender, village, nearestHub;
     int age, severity;
-
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     // --- Name ---
     while (true) {
@@ -149,7 +162,9 @@ Patient Patient::registerNewPatient(const vector<string>& validVillages,
     return Patient(newID, name, age, gender, village, nearestHub, severity);
 }
 
-//  fucntion overridding from Entity
+// ============================================================
+//  Overridden from Entity
+// ============================================================
 
 string Patient::getID() const {
     return id;
@@ -178,6 +193,10 @@ void Patient::display() const {
     cout << "  +-------------------------------------------------+\n";
 }
 
+// ============================================================
+//  Getters
+// ============================================================
+
 int Patient::getAge() const           { return age; }
 string Patient::getGender() const     { return gender; }
 string Patient::getVillage() const    { return village; }
@@ -192,13 +211,20 @@ string Patient::getAssignedHospitalName() const {
     return assignedHospitalName;
 }
 
-//  setter called by allocator
+// ============================================================
+//  Setter — called by Allocator
+// ============================================================
+
 void Patient::setAssignedHospital(const string& hospID, const string& hospName) {
     assignedHospitalID   = hospID;
     assignedHospitalName = hospName;
 }
 
-//  file Serialisation Format: ID,Name,Age,Gender,Village,Hub,Severity,HospID,HospName
+// ============================================================
+//  File Serialisation
+//  Format: ID,Name,Age,Gender,Village,Hub,Severity,HospID,HospName
+// ============================================================
+
 string Patient::toFileString() const {
     return id + "," + name + "," + to_string(age) + "," +
            gender + "," + village + "," + nearestHub + "," +
