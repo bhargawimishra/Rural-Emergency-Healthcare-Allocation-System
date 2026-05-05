@@ -5,12 +5,24 @@
 #include <algorithm>
 using namespace std;
 
+// ============================================================
+//  Helper — trim whitespace from string edges
+// ============================================================
+
 static string trim(const string& s) {
     size_t start = s.find_first_not_of(" \t\r\n");
     size_t end   = s.find_last_not_of(" \t\r\n");
     if (start == string::npos) return "";
     return s.substr(start, end - start + 1);
 }
+
+// ============================================================
+//  Load Hospitals from hospitals.txt
+//  Format:
+//  HospitalID,Name,Location,AvailableBeds,TotalBeds,
+//  Phone,Emergency24x7,DistWaknaghat,DistKandaghat,
+//  DistSolan,DistShimla,DistChail
+// ============================================================
 
 vector<Hospital> FileManager::loadHospitals(const string& filename) {
     vector<Hospital> hospitals;
@@ -92,9 +104,12 @@ vector<Hospital> FileManager::loadHospitals(const string& filename) {
     return hospitals;
 }
 
+// ============================================================
+//  Load Places from places.txt
 //  Format:
 //  Village,NearestHub
 //  Returns vector of <village, hub> pairs
+// ============================================================
 
 vector<pair<string, string>> FileManager::loadPlaces(const string& filename) {
     vector<pair<string, string>> places;
@@ -144,10 +159,11 @@ vector<pair<string, string>> FileManager::loadPlaces(const string& filename) {
     return places;
 }
 
+// ============================================================
 //  Save Single Patient (append mode)
 //  Format:
 //  ID,Name,Age,Gender,Village,Hub,Severity,HospID,HospName
-
+// ============================================================
 
 void FileManager::savePatient(const Patient& patient, const string& filename) {
     ofstream file(filename, ios::app);
@@ -160,13 +176,14 @@ void FileManager::savePatient(const Patient& patient, const string& filename) {
     file.close();
 }
 
-
+// ============================================================
 //  Load All Patients from patients.txt
 //  Format:
 //  ID,Name,Age,Gender,Village,Hub,Severity,HospID,HospName
+// ============================================================
 
 vector<Patient> FileManager::loadPatients(const string& filename,
-                                          const vector<pair<string,string>>& villageHubMap) {
+                                          const vector<pair<string,string>>& /*villageHubMap*/) {
     vector<Patient> patients;
     ifstream file(filename);
 
@@ -239,6 +256,9 @@ vector<Patient> FileManager::loadPatients(const string& filename,
     return patients;
 }
 
+// ============================================================
+//  Save All Patients (overwrite mode) — called on exit
+// ============================================================
 
 void FileManager::saveAllPatients(const vector<Patient>& patients, const string& filename) {
     ofstream file(filename);
