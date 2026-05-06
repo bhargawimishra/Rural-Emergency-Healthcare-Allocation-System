@@ -21,11 +21,7 @@ public:
     }
 };
 
-// ============================================================
-//  Hospital — Derived from Entity
-//  Stores hospital data loaded from hospitals.txt
-//  Overrides display() and getID() from Entity
-// ============================================================
+// Hospital — Derived from Entity
 
 class Hospital : public Entity {
 private:
@@ -34,8 +30,7 @@ private:
     int totalBeds;
     string phone;
     bool emergency;
-
-    // Distance (km) from each hub town
+//hubs
     int distWaknaghat;
     int distKandaghat;
     int distSolan;
@@ -69,11 +64,9 @@ public:
     bool isEmergency() const;
     int getDistanceFromHub(const string& hub) const;
 
-    // Bed management
     void decrementBed();
 
-    // Eligibility check
     bool isEligible(int severity) const;
 };
 
-#endif // HOSPITAL_H
+#endif
