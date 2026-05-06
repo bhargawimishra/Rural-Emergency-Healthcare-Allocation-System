@@ -3,10 +3,6 @@
 #include <stdexcept>
 using namespace std;
 
-// ============================================================
-//  Constructor
-// ============================================================
-
 Hospital::Hospital(const string& id,
                    const string& name,
                    const string& location,
@@ -34,15 +30,12 @@ Hospital::Hospital(const string& id,
     if (id.empty() || name.empty() || location.empty()) {
         throw InvalidHospitalDataException();
     }
-}
+} //no critical field should be empty
 
-// ============================================================
-//  Overridden from Entity
-// ============================================================
-
+// function overridding
 string Hospital::getID() const {
     return id;
-}
+} // function overridding from entity
 
 void Hospital::display() const {
     cout << "\n  +-------------------------------------------------+\n";
@@ -64,10 +57,7 @@ void Hospital::display() const {
     cout << "  +-------------------------------------------------+\n";
 }
 
-// ============================================================
-//  Getters
-// ============================================================
-
+//getters for encapsulation
 string Hospital::getLocation() const {
     return location;
 }
@@ -95,14 +85,11 @@ int Hospital::getDistanceFromHub(const string& hub) const {
     if (hub == "Shimla")    return distShimla;
     if (hub == "Chail")     return distChail;
 
-    // Unknown hub — return a very large distance so it scores lowest
+    // unknown hub?return a very large distance so it scores lowest
     return 999;
 }
 
-// ============================================================
-//  Bed Management
-// ============================================================
-
+//after assigning beds, decreases bed count
 void Hospital::decrementBed() {
     if (availableBeds <= 0) {
         throw BedUnavailableException();
@@ -110,12 +97,9 @@ void Hospital::decrementBed() {
     availableBeds--;
 }
 
-// ============================================================
-//  Eligibility Check
-//  Rules:
-//   - availableBeds must be > 0 (not -1, not 0)
-//   - if severity >= 4, hospital must have emergency = true
-// ============================================================
+/*  eligibility:
+-availableBeds must be > 0 (not -1, not 0)
+-if severity >= 4, hospital must have emergency = true*/
 
 bool Hospital::isEligible(int severity) const {
     if (availableBeds <= 0) return false;
