@@ -6,15 +6,7 @@
 #include <algorithm>
 using namespace std;
 
-// ============================================================
-//  Static counter initialisation
-// ============================================================
-
 int Patient::patientCounter = 0;
-
-// ============================================================
-//  Helper — Auto-generate Patient ID (P001, P002 ...)
-// ============================================================
 
 string Patient::generateID() {
     patientCounter++;
@@ -22,10 +14,6 @@ string Patient::generateID() {
     oss << "P" << setw(3) << setfill('0') << patientCounter;
     return oss.str();
 }
-
-// ============================================================
-//  Constructor
-// ============================================================
 
 Patient::Patient(const string& id,
                  const string& name,
@@ -63,10 +51,6 @@ Patient::Patient(const string& id,
     }
 }
 
-// ============================================================
-//  Factory Method — Interactive Registration
-// ============================================================
-
 Patient Patient::registerNewPatient(const vector<string>& validVillages,
                                     const vector<pair<string,string>>& villageHubMap) {
     string name, gender, village, nearestHub;
@@ -92,7 +76,7 @@ Patient Patient::registerNewPatient(const vector<string>& validVillages,
         cout << "  [!] Invalid age. Enter a value between 1 and 120.\n";
     }
 
-    // --- Gender ---
+    // gender
     while (true) {
         cout << "  Enter Gender (M/F/Other): ";
         getline(cin, gender);
