@@ -70,10 +70,7 @@ int getIntInput(const string& prompt, int min, int max) {
     }
 }
 
-// ============================================================
-//  1. Register New Patient
-// ============================================================
-
+//register new patient
 void registerPatient() {
     printDivider();
     cout << "  REGISTER NEW PATIENT\n";
@@ -83,7 +80,7 @@ void registerPatient() {
         Patient p = Patient::registerNewPatient(validVillages, villageHubMap);
         patients.push_back(p);
 
-        // Save immediately to file
+        // save patient to file
         FileManager::savePatient(p, "patients.txt");
 
         cout << "\n  [✓] Patient registered successfully with ID: "
@@ -101,9 +98,7 @@ void registerPatient() {
     }
 }
 
-// ============================================================
-//  2. Allocate Hospital to Patient
-// ============================================================
+//allocate
 
 void allocateHospital() {
     printDivider();
@@ -115,7 +110,7 @@ void allocateHospital() {
         return;
     }
 
-    // Show unallocated patients
+    // show unallocated patients
     cout << "\n  Unallocated Patients:\n";
     vector<int> unallocatedIdx;
     for (int i = 0; i < (int)patients.size(); i++) {
@@ -139,7 +134,7 @@ void allocateHospital() {
     try {
         Allocator::allocate(selected, hospitals);
 
-        // Persist updated patients list
+        //print updated patients list
         FileManager::saveAllPatients(patients, "patients.txt");
 
     } catch (const NoHospitalAvailableException& e) {
@@ -150,10 +145,7 @@ void allocateHospital() {
     }
 }
 
-// ============================================================
-//  3. View All Patients
-// ============================================================
-
+//view updated patients
 void viewAllPatients() {
     printDivider();
     cout << "  ALL PATIENTS  (" << patients.size() << " total)\n";
@@ -164,17 +156,14 @@ void viewAllPatients() {
         return;
     }
 
-    // Polymorphism in action — Entity* pointing to Patient objects
+    // entity* pointing to Patient objects (polymorphism)
     for (auto& p : patients) {
         Entity* e = &p;
         e->display();
     }
 }
 
-// ============================================================
-//  4. Search Patient by ID
-// ============================================================
-
+//search patient by ID
 void searchPatient() {
     printDivider();
     cout << "  SEARCH PATIENT BY ID\n";
@@ -207,10 +196,7 @@ void searchPatient() {
     }
 }
 
-// ============================================================
-//  5. Sort Patients by Severity
-// ============================================================
-
+//sort patients by severity
 void sortPatients() {
     printDivider();
     cout << "  PATIENTS SORTED BY SEVERITY (Critical First)\n";
@@ -230,9 +216,7 @@ void sortPatients() {
     }
 }
 
-// ============================================================
-//  6. View All Hospitals
-// ============================================================
+//view all hospitals
 
 void viewAllHospitals() {
     printDivider();
@@ -246,10 +230,7 @@ void viewAllHospitals() {
     }
 }
 
-// ============================================================
-//  7. View Allocation Score Report
-// ============================================================
-
+//view allocation score
 void viewScoreReport() {
     printDivider();
     cout << "  ALLOCATION SCORE REPORT\n";
@@ -272,10 +253,7 @@ void viewScoreReport() {
     Allocator::displayAllocationReport(patients[sel - 1], hospitals);
 }
 
-// ============================================================
-//  8. View Village Directory
-// ============================================================
-
+//view village directory
 void viewVillageDirectory() {
     printDivider();
     cout << "  VILLAGE DIRECTORY  (" << villageHubMap.size() << " villages)\n";
@@ -291,15 +269,13 @@ void viewVillageDirectory() {
     }
 }
 
-// ============================================================
-//  Startup — Load all data files
-// ============================================================
+//load dataset
 
 bool loadAllData() {
     cout << "\n  Loading system data...\n";
     bool success = true;
 
-    // Load hospitals
+    //load hospitals
     try {
         hospitals = FileManager::loadHospitals("hospitals.txt");
     } catch (const FileNotFoundException& e) {
@@ -310,7 +286,7 @@ bool loadAllData() {
         success = false;
     }
 
-    // Load places
+    //load places
     try {
         villageHubMap = FileManager::loadPlaces("places.txt");
         for (const auto& vh : villageHubMap)
@@ -323,7 +299,7 @@ bool loadAllData() {
         success = false;
     }
 
-    // Load patients — not fatal if missing
+    // load patient
     try {
         patients = FileManager::loadPatients("patients.txt", villageHubMap);
     } catch (const FileParseException& e) {
@@ -332,10 +308,6 @@ bool loadAllData() {
 
     return success;
 }
-
-// ============================================================
-//  Main
-// ============================================================
 
 int main() {
     printHeader();
@@ -377,7 +349,7 @@ int main() {
                 }
                 cout << "\n  ╔══════════════════════════════════════════════════════╗\n";
                 cout << "  ║   Thank you for using Rural Healthcare System.       ║\n";
-                cout << "  ║   Stay safe, Waknaghat region.                       ║\n";
+                cout << "  ║   Stay safe, stay healhty!                       ║\n";
                 cout << "  ╚══════════════════════════════════════════════════════╝\n\n";
                 break;
             default:
