@@ -5,9 +5,7 @@
 #include <string>
 using namespace std;
 
-// ============================================================
-//  Custom Exceptions for Hospital
-// ============================================================
+//exceptions
 
 class BedUnavailableException : public exception {
 public:
