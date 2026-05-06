@@ -12,18 +12,10 @@
 #include "filemanager.h"
 using namespace std;
 
-// ============================================================
-//  Global Data
-// ============================================================
-
 vector<Hospital>              hospitals;
 vector<Patient>               patients;
 vector<pair<string, string>>  villageHubMap;  // <village, hub>
 vector<string>                validVillages;
-
-// ============================================================
-//  UI Helpers
-// ============================================================
 
 void printHeader() {
     cout << "\n";
